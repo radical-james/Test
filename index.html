@@ -12,6 +12,7 @@
         .page.active { display: block; }
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #000000; border-bottom: 2px solid #F2CB13; }
         .top-bar img { height: 40px; }
+        .top-bar h2 { margin: 0; }
         .card, .form-group { background: #1C2526; border-radius: 10px; padding: 15px; margin: 10px 0; box-shadow: 0 4px 8px rgba(242, 203, 19, 0.2); }
         .card h2, .form-group h2 { color: #F2CB13; font-size: 1.2em; margin: 0 0 10px; }
         .card p, .form-group p { color: #BBBBBB; font-size: 0.9em; margin: 0 0 10px; }
@@ -21,9 +22,12 @@
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #1C2526; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 4px rgba(0,0,0,0.5); }
         .bottom-nav button { background: none; border: none; color: #F2CB13; font-size: 1em; font-weight: bold; }
         .bottom-nav button:active { color: #D4A700; }
-        .bulletin-list { margin: 10px 0; }
-        .bulletin-list .card { margin: 5px 0; }
+        .bulletin-list, .updates-list, .calendar-list { margin: 10px 0; }
+        .bulletin-list .card, .updates-list .card { margin: 5px 0; display: flex; justify-content: space-between; align-items: center; }
+        .bulletin-list .card button, .updates-list .card button { width: auto; padding: 5px 10px; }
         .chatbox { height: 200px; background: #2C3A3D; padding: 10px; overflow-y: auto; margin: 10px 0; }
+        .checklist label, .calendar-item { display: block; margin: 5px 0; }
+        .map-placeholder { height: 200px; background: #2C3A3D; display: flex; align-items: center; justify-content: center; margin: 10px 0; }
     </style>
 </head>
 <body>
@@ -71,13 +75,13 @@
         </div>
         <p>Filter: <button>All</button> <button>My Car Only</button> <button>Recalls</button></p>
         <div class="bulletin-list">
-            <div class="card">Recall: Engine Issue - Oct 2025 (Models: SR3, SR1) <button onclick="navigateTo('bulletin-detail-1')">View</button></div>
-            <div class="card">Advisory: Tyre Wear - Sep 2025 (Models: RXC) <button onclick="navigateTo('bulletin-detail-2')">View</button></div>
+            <div class="card">Recall: Engine Issue - Oct 2025, Models: SR3, SR1, Status: Mandatory <button onclick="navigateTo('bulletin-detail-1')">View</button></div>
+            <div class="card">Advisory: Tyre Wear - Sep 2025, Models: RXC, Status: Advisory <button onclick="navigateTo('bulletin-detail-2')">View</button></div>
         </div>
         <button onclick="navigateTo('owner-home')">Back</button>
     </div>
 
-    <!-- Bulletin Detail (Stub) -->
+    <!-- Bulletin Detail #1 (Recall) -->
     <div id="bulletin-detail-1" class="page">
         <div class="top-bar">
             <h2>Recall: Engine Issue - Oct 2025</h2>
@@ -86,11 +90,13 @@
             <p>Tags: SR3, SR1, High</p>
             <p>Full text: Engine recall due to fault. Contact dealer immediately.</p>
             <img src="https://via.placeholder.com/300x200/F2CB13/000000?text=Engine+Image" alt="Engine Image">
-            <button>Download PDF</button>
-            <button>Book Service</button>
+            <button onclick="alert('PDF downloaded')">Download PDF</button>
+            <button onclick="navigateTo('map')">Book Service</button>
         </div>
         <button onclick="navigateTo('bulletins')">Back</button>
     </div>
+
+    <!-- Bulletin Detail #2 (Advisory) -->
     <div id="bulletin-detail-2" class="page">
         <div class="top-bar">
             <h2>Advisory: Tyre Wear - Sep 2025</h2>
@@ -98,7 +104,7 @@
         <div class="card">
             <p>Tags: RXC, Low</p>
             <p>Full text: Check tyre wear on RXC models. Advisory only.</p>
-            <button>Download PDF</button>
+            <button onclick="alert('PDF downloaded')">Download PDF</button>
         </div>
         <button onclick="navigateTo('bulletins')">Back</button>
     </div>
@@ -113,8 +119,124 @@
             <p>AI: How can I help you today?</p>
             <p>You: [Type here]</p>
         </div>
-        <button onclick="alert('Escalated to Radical Support')">Submit to Radical Support</button>
+        <button onclick="showSupportForm()">Submit to Radical Support</button>
         <button onclick="navigateTo('owner-home')">Back</button>
+    </div>
+
+    <!-- Support Form -->
+    <div id="support-form" class="page" style="display: none;">
+        <div class="top-bar">
+            <h2>Support Ticket Form</h2>
+        </div>
+        <div class="form-group">
+            <input type="text" placeholder="Subject" />
+            <textarea placeholder="Description"></textarea>
+            <input type="file" accept="image/*,video/*" placeholder="Upload photos/video" />
+            <select>
+                <option value="">Select Car</option>
+                <option value="sr3">SR3</option>
+                <option value="rxc">RXC</option>
+            </select>
+            <button onclick="alert('Ticket created in Zoho Desk'); hideSupportForm()">Submit</button>
+        </div>
+        <button onclick="hideSupportForm()">Back</button>
+    </div>
+
+    <!-- My Garage -->
+    <div id="garage" class="page">
+        <div class="top-bar">
+            <h2>My Garage</h2>
+        </div>
+        <div class="card">
+            <p>Add your Radical vehicle by VIN.</p>
+            <input type="text" placeholder="Enter VIN..." />
+            <button onclick="alert('VIN added to garage')">Add Vehicle</button>
+        </div>
+        <div class="card">
+            <p>Current Vehicles: None</p>
+        </div>
+        <button onclick="navigateTo('owner-home')">Back</button>
+    </div>
+
+    <!-- Events & Track Days -->
+    <div id="events" class="page">
+        <div class="top-bar">
+            <h2>Events & Track Days</h2>
+        </div>
+        <div class="calendar-list">
+            <div class="card">
+                <h3>World Finals 2025</h3>
+                <p>Oct 15-18, Virginia International Raceway</p>
+                <button onclick="alert('Registered for event')">Register</button>
+            </div>
+            <div class="card">
+                <h3>Racing Series</h3>
+                <p>Drive/Race opportunities</p>
+                <button onclick="navigateTo('racing-series')">View Series</button>
+            </div>
+        </div>
+        <button onclick="navigateTo('owner-home')">Back</button>
+    </div>
+
+    <!-- Racing Series (Added from Radical site inspiration) -->
+    <div id="racing-series" class="page">
+        <div class="top-bar">
+            <h2>Racing Series</h2>
+        </div>
+        <div class="card">
+            <p>Go Racing: Find races and series.</p>
+            <button onclick="alert('Series info loaded')">Explore</button>
+        </div>
+        <button onclick="navigateTo('events')">Back</button>
+    </div>
+
+    <!-- Dealer/Team Map -->
+    <div id="map" class="page">
+        <div class="top-bar">
+            <h2>Dealer/Team Map</h2>
+        </div>
+        <div class="map-placeholder">
+            <p>[Map Placeholder - Nearest Dealer: Radical HQ, UK]</p>
+        </div>
+        <button onclick="alert('Lead created in CRM for booking')">Select Dealer</button>
+        <button onclick="navigateTo('owner-home')">Back</button>
+    </div>
+
+    <!-- Account & Garage -->
+    <div id="account" class="page">
+        <div class="top-bar">
+            <h2>Account & Garage</h2>
+        </div>
+        <div class="card">
+            <p>User Profile: radical-james</p>
+            <p>Linked Garage: 0 vehicles</p>
+            <button onclick="navigateTo('garage')">Manage Garage</button>
+        </div>
+        <button onclick="navigateTo('owner-home')">Back</button>
+    </div>
+
+    <!-- More -->
+    <div id="more" class="page">
+        <div class="top-bar">
+            <h2>More</h2>
+        </div>
+        <div class="card">
+            <button onclick="alert('Logged out')">Logout</button>
+            <button onclick="navigateTo('settings')">Settings</button>
+        </div>
+        <button onclick="navigateTo('owner-home')">Back</button>
+    </div>
+
+    <!-- Settings (Stub) -->
+    <div id="settings" class="page">
+        <div class="top-bar">
+            <h2>Settings</h2>
+        </div>
+        <div class="card">
+            <p>Notifications: On</p>
+            <button onclick="alert('Settings saved')">Save</button>
+        </div>
+        <button onclick="navigateTo('more')">Back</button>
     </div>
 
     <!-- PDI Submission (Dealer Only) -->
@@ -126,15 +248,16 @@
             <h2>PDI Form</h2>
             <input type="text" placeholder="Scan VIN or enter manually..." />
             <input type="number" placeholder="Odometer reading..." />
-            <p>Checklist:</p>
-            <label><input type="checkbox"> Fluids checked</label>
-            <label><input type="checkbox"> Wiring checked</label>
-            <label><input type="checkbox"> Tyres checked</label>
-            <label><input type="checkbox"> Test run completed</label>
+            <div class="checklist">
+                <label><input type="checkbox"> Fluids checked</label>
+                <label><input type="checkbox"> Wiring checked</label>
+                <label><input type="checkbox"> Tyres checked</label>
+                <label><input type="checkbox"> Test run completed</label>
+            </div>
             <input type="file" accept="image/*" placeholder="Upload photos..." />
             <input type="text" placeholder="Technician name..." />
             <input type="text" placeholder="Signature (draw here)..." />
-            <button onclick="alert('PDI submitted successfully')">Submit</button>
+            <button onclick="alert('PDI submitted successfully - PDF to HQ & CRM updated')">Submit</button>
         </div>
         <button onclick="navigateTo('dealer-dashboard')">Back</button>
     </div>
@@ -147,7 +270,7 @@
         </div>
         <div class="card">
             <h2>📂 Bulletins Library</h2>
-            <button>View Docs</button>
+            <button onclick="alert('View dealer docs')">View Docs</button>
         </div>
         <div class="card">
             <h2>📝 PDI Submissions</h2>
@@ -155,19 +278,19 @@
         </div>
         <div class="card">
             <h2>📦 Parts Orders</h2>
-            <button>Place Order</button>
+            <button onclick="navigateTo('parts-orders')">Place Order</button>
         </div>
         <div class="card">
             <h2>👥 Leads & Contracts</h2>
-            <button>Push to CRM</button>
+            <button onclick="navigateTo('leads-contracts')">Push to CRM</button>
         </div>
         <div class="card">
             <h2>🔧 Warranty / Claims</h2>
-            <button>Submit Case</button>
+            <button onclick="navigateTo('warranty-claims')">Submit Case</button>
         </div>
         <div class="card">
             <h2>📢 Dealer Updates</h2>
-            <p>Urgent: New policy effective Oct 2025</p>
+            <button onclick="navigateTo('dealer-updates')">View Updates</button>
         </div>
         <div class="bottom-nav">
             <button onclick="navigateTo('dealer-dashboard')">Dashboard</button>
@@ -178,20 +301,85 @@
         </div>
     </div>
 
-    <!-- Placeholder Pages -->
-    <div id="garage" class="page"><h2>My Garage</h2><button onclick="navigateTo('owner-home')">Back</button></div>
-    <div id="events" class="page"><h2>Events & Track Days</h2><button onclick="navigateTo('owner-home')">Back</button></div>
-    <div id="map" class="page"><h2>Dealer/Team Map</h2><button onclick="navigateTo('owner-home')">Back</button></div>
-    <div id="account" class="page"><h2>Account & Garage</h2><button onclick="navigateTo('owner-home')">Back</button></div>
-    <div id="more" class="page"><h2>More</h2><button onclick="navigateTo('owner-home')">Back</button></div>
-    <div id="orders" class="page"><h2>Parts Orders</h2><button onclick="navigateTo('dealer-dashboard')">Back</button></div>
-    <div id="profile" class="page"><h2>Profile</h2><button onclick="navigateTo('dealer-dashboard')">Back</button></div>
+    <!-- Parts Orders -->
+    <div id="parts-orders" class="page">
+        <div class="top-bar">
+            <h2>Parts Orders</h2>
+        </div>
+        <div class="form-group">
+            <input type="text" placeholder="Part Number (e.g., MO-XXX)..." />
+            <input type="number" placeholder="Quantity..." />
+            <textarea placeholder="Order Notes"></textarea>
+            <button onclick="alert('Order placed - Monthly MO-XXX flow initiated')">Submit Order</button>
+        </div>
+        <button onclick="navigateTo('dealer-dashboard')">Back</button>
+    </div>
+
+    <!-- Leads & Contracts -->
+    <div id="leads-contracts" class="page">
+        <div class="top-bar">
+            <h2>Leads & Contracts</h2>
+        </div>
+        <div class="form-group">
+            <input type="text" placeholder="Lead Name/Email..." />
+            <textarea placeholder="Contract Details"></textarea>
+            <button onclick="alert('Lead pushed to CRM')">Submit Lead</button>
+        </div>
+        <button onclick="navigateTo('dealer-dashboard')">Back</button>
+    </div>
+
+    <!-- Warranty / Claims -->
+    <div id="warranty-claims" class="page">
+        <div class="top-bar">
+            <h2>Warranty / Claims</h2>
+        </div>
+        <div class="form-group">
+            <input type="text" placeholder="VIN / Claim ID..." />
+            <textarea placeholder="Claim Description"></textarea>
+            <input type="file" accept="image/*" placeholder="Upload Evidence..." />
+            <button onclick="alert('Claim submitted')">Submit</button>
+        </div>
+        <button onclick="navigateTo('dealer-dashboard')">Back</button>
+    </div>
+
+    <!-- Dealer Updates -->
+    <div id="dealer-updates" class="page">
+        <div class="top-bar">
+            <h2>Dealer Updates</h2>
+        </div>
+        <div class="updates-list">
+            <div class="card">Urgent: New policy effective Oct 2025 <button>Read More</button></div>
+            <div class="card">HQ Announcement: Parts Delay - Sep 2025 <button>Read More</button></div>
+        </div>
+        <button onclick="navigateTo('dealer-dashboard')">Back</button>
+    </div>
+
+    <!-- Dealer Orders (Stub for Bottom Nav) -->
+    <div id="orders" class="page"><h2>Orders History</h2><button onclick="navigateTo('dealer-dashboard')">Back</button></div>
+
+    <!-- Dealer Profile -->
+    <div id="profile" class="page">
+        <div class="top-bar">
+            <h2>Profile</h2>
+        </div>
+        <div class="card">
+            <p>Dealer: Radical HQ</p>
+            <button onclick="alert('Profile updated')">Edit</button>
+        </div>
+        <button onclick="navigateTo('dealer-dashboard')">Back</button>
+    </div>
 
     <script>
         function navigateTo(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             window.scrollTo(0, 0);
+        }
+        function showSupportForm() {
+            navigateTo('support-form');
+        }
+        function hideSupportForm() {
+            navigateTo('support');
         }
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js');
