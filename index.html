@@ -1,37 +1,178 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>MyRadical — Clickable Demo</title>
   <style>
-    :root{--bg:#0b1020;--card:#0f1724;--accent:#ff3b30;--muted:#98a0b3;--glass:rgba(255,255,255,0.03)}
-    *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial}
-    html,body,#app{height:100%;margin:0;background:linear-gradient(180deg,#071022 0%,#071a2a 100%);color:#e6eef8}
-    .container{max-width:1000px;margin:28px auto;padding:20px}
-    .card{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 6px 20px rgba(2,6,23,0.6)}
-    h1{margin:0 0 12px;font-size:20px}
-    .role-choice{display:flex;gap:16px;flex-wrap:wrap}
-    .role-btn{flex:1;min-width:220px;padding:22px;border-radius:10px;background:var(--glass);cursor:pointer;border:1px solid rgba(255,255,255,0.04);text-align:center}
-    .role-btn h2{margin:0 0 8px;font-size:18px}
-    .muted{color:var(--muted);font-size:13px}
-    nav{display:flex;gap:12px;margin-top:16px}
-    .tile-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
-    .tile{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:10px;cursor:pointer;border:1px solid rgba(255,255,255,0.03)}
-    .bottom-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:rgba(6,10,18,0.6);padding:10px 18px;border-radius:999px;display:flex;gap:12px}
-    .bottom-nav button{background:transparent;border:none;color:var(--muted);cursor:pointer}
-    .hidden{display:none}
-    .btn{background:var(--accent);color:#fff;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
-    .small{font-size:13px}
-    .row{display:flex;gap:12px;align-items:center}
-    .field{display:block;margin:8px 0}
-    .input,textarea,select{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:inherit}
-    .vehicle-card{display:flex;gap:12px;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border:1px solid rgba(255,255,255,0.02)}
-    .chip{background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:999px;font-size:12px}
-    .list{display:flex;flex-direction:column;gap:8px}
-    .kbd{font-family:monospace;background:rgba(255,255,255,0.03);padding:4px 6px;border-radius:6px}
-    /* simple responsive */
-    @media (max-width:800px){.tile-grid{grid-template-columns:repeat(2,1fr)}.container{margin:10px}}
+    :root {
+      --bg: #000000;
+      --card: #1C2526;
+      --accent: #F2CB13;
+      --muted: #BBBBBB;
+      --glass: rgba(255,255,255,0.03);
+    }
+    * {
+      box-sizing: border-box;
+      font-family: Inter, system-ui, Segoe UI, Roboto, 'Helvetica Neue', Arial;
+    }
+    html, body, #app {
+      height: 100%;
+      margin: 0;
+      background: linear-gradient(180deg, #000000 0%, #0A1214 100%);
+      color: #FFFFFF;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 28px auto;
+      padding: 20px;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      color: var(--accent);
+    }
+    .role-choice {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .role-btn {
+      flex: 1;
+      min-width: 220px;
+      padding: 22px;
+      border-radius: 10px;
+      background: var(--glass);
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.04);
+      text-align: center;
+    }
+    .role-btn h2 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      color: var(--accent);
+    }
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+    }
+    nav {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .tile-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .tile {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      padding: 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    .tile strong {
+      color: var(--accent);
+    }
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 18px;
+      background: var(--card);
+      padding: 10px 18px;
+      border-radius: 999px;
+      display: flex;
+      gap: 12px;
+    }
+    .bottom-nav button {
+      background: transparent;
+      border: none;
+      color: var(--accent);
+      cursor: pointer;
+    }
+    .bottom-nav button:active {
+      color: #D4A700;
+    }
+    .hidden {
+      display: none;
+    }
+    .btn {
+      background: var(--accent);
+      color: #000000;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+    .btn:active {
+      background: #D4A700;
+    }
+    .small {
+      font-size: 13px;
+    }
+    .row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .field {
+      display: block;
+      margin: 8px 0;
+    }
+    .input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--muted);
+      background: rgba(255,255,255,0.02);
+      color: #FFFFFF;
+    }
+    .vehicle-card {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 10px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+      border: 1px solid rgba(255,255,255,0.02);
+    }
+    .chip {
+      background: var(--glass);
+      padding: 6px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .kbd {
+      font-family: monospace;
+      background: var(--glass);
+      padding: 4px 6px;
+      border-radius: 6px;
+      color: var(--muted);
+    }
+    @media (max-width: 800px) {
+      .tile-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .container {
+        margin: 10px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -53,7 +194,6 @@
         </div>
       </div>
     </div>
-
     <!-- Customer Home -->
     <div id="screen-customer-home" class="card hidden">
       <div class="row" style="justify-content:space-between">
@@ -67,7 +207,6 @@
           <div class="chip">Owner</div>
         </div>
       </div>
-
       <div class="tile-grid">
         <div class="tile" onclick="goTo('screen-customer-garage')">
           <strong>My Garage</strong>
@@ -95,7 +234,6 @@
         </div>
       </div>
     </div>
-
     <!-- Customer Garage -->
     <div id="screen-customer-garage" class="card hidden">
       <div class="row" style="justify-content:space-between;align-items:flex-start">
@@ -107,10 +245,9 @@
           <button class="btn" onclick="goTo('screen-customer-home')">Back</button>
         </div>
       </div>
-
       <div style="margin-top:12px" class="list">
         <div class="vehicle-card">
-          <div style="width:72px;height:48px;background:linear-gradient(90deg,#122236,#18314a);border-radius:6px"></div>
+          <div style="width:72px;height:48px;background:linear-gradient(90deg,#1C2526,#2C3A3D);border-radius:6px"></div>
           <div style="flex:1">
             <div style="display:flex;justify-content:space-between;align-items:center">
               <div>
@@ -129,7 +266,6 @@
             </div>
           </div>
         </div>
-
         <div class="card" style="padding:12px;margin-top:10px">
           <h3 style="margin:0 0 8px">Maintenance Logbook</h3>
           <div class="muted small">Recent activity</div>
@@ -142,7 +278,6 @@
         </div>
       </div>
     </div>
-
     <!-- Bulletins -->
     <div id="screen-bulletins" class="card hidden">
       <div class="row" style="justify-content:space-between">
@@ -152,7 +287,6 @@
         </div>
         <div><button class="btn" onclick="goTo('screen-customer-home')">Back</button></div>
       </div>
-
       <div style="margin-top:12px" class="list">
         <div class="tile" style="padding:12px" onclick="openDoc('Safety recall: valve guide')">
           <strong>Safety recall: valve guide</strong>
@@ -164,7 +298,6 @@
         </div>
       </div>
     </div>
-
     <!-- Events -->
     <div id="screen-events" class="card hidden">
       <div class="row" style="justify-content:space-between">
@@ -174,7 +307,6 @@
         </div>
         <div><button class="btn" onclick="goTo('screen-customer-home')">Back</button></div>
       </div>
-
       <div style="margin-top:12px" class="list">
         <div class="tile" onclick="openEvent('Radical Donington Test Day - 2025-10-12')">
           <strong>Radical Donington Test Day</strong>
@@ -186,7 +318,6 @@
         </div>
       </div>
     </div>
-
     <!-- Performance -->
     <div id="screen-performance" class="card hidden">
       <div class="row" style="justify-content:space-between">
@@ -196,14 +327,12 @@
         </div>
         <div><button class="btn" onclick="goTo('screen-customer-home')">Back</button></div>
       </div>
-
       <div style="margin-top:12px" class="list">
         <div class="card">
           <h3 style="margin:0 0 8px">Best Lap — Donington Park</h3>
           <div class="muted small">1:42.36 • View trace & compare</div>
           <div style="margin-top:8px"><button class="btn" onclick="goTo('screen-lap-compare')">View Trace</button></div>
         </div>
-
         <div class="card" style="margin-top:10px">
           <h3 style="margin:0 0 8px">Upload Session</h3>
           <div class="muted small">Import RaceChrono CSV / GPX or record live</div>
@@ -212,18 +341,16 @@
             <button class="btn" style="margin-left:8px" onclick="alert('Demo: file import simulated')">Upload</button>
           </div>
         </div>
-
         <div class="card" style="margin-top:10px">
           <h3 style="margin:0 0 8px">AI Coaching</h3>
           <div class="muted small">Automated insights for uploaded sessions</div>
-          <div style="margin-top:8px"> 
+          <div style="margin-top:8px">
             <div style="background:rgba(255,255,255,0.02);padding:10px;border-radius:8px">Braking: Try braking 10m later at Turn 5 to carry more speed through the apex.</div>
             <div style="margin-top:8px"><button class="btn">Request Expert Coach (paid)</button></div>
           </div>
         </div>
       </div>
     </div>
-
     <!-- Lap compare -->
     <div id="screen-lap-compare" class="card hidden">
       <div class="row" style="justify-content:space-between">
@@ -233,9 +360,8 @@
         </div>
         <div><button class="btn" onclick="goTo('screen-performance')">Back</button></div>
       </div>
-
       <div style="margin-top:12px">
-        <div style="height:220px;border-radius:10px;background:linear-gradient(90deg,#081424,#0b2132);display:flex;align-items:center;justify-content:center;color:var(--muted)">[Map Trace Placeholder]</div>
+        <div style="height:220px;border-radius:10px;background:linear-gradient(90deg,#1C2526,#2C3A3D);display:flex;align-items:center;justify-content:center;color:var(--muted)">[Map Trace Placeholder]</div>
         <div style="margin-top:12px;display:flex;gap:10px">
           <div class="card" style="flex:1;padding:10px">Lap time: <strong>1:42.36</strong></div>
           <div class="card" style="flex:1;padding:10px">Delta vs prev: <strong>-0.82s</strong></div>
@@ -243,7 +369,6 @@
         </div>
       </div>
     </div>
-
     <!-- Community -->
     <div id="screen-community" class="card hidden">
       <div class="row" style="justify-content:space-between">
@@ -253,7 +378,6 @@
         </div>
         <div><button class="btn" onclick="goTo('screen-customer-home')">Back</button></div>
       </div>
-
       <div style="margin-top:12px" class="list">
         <div class="tile" style="padding:12px">
           <strong>Leaderboard — Donington Park</strong>
@@ -265,7 +389,6 @@
         </div>
       </div>
     </div>
-
     <!-- Support -->
     <div id="screen-support" class="card hidden">
       <div class="row" style="justify-content:space-between">
@@ -275,14 +398,12 @@
         </div>
         <div><button class="btn" onclick="goTo('screen-customer-home')">Back</button></div>
       </div>
-
       <div style="margin-top:12px">
         <input class="input" id="supportQ" placeholder="Describe your issue (e.g. oil leak after session)" />
         <div style="margin-top:8px"><button class="btn" onclick="startChat()">Ask AI</button></div>
         <div id="chatResult" style="margin-top:12px"></div>
       </div>
     </div>
-
     <!-- Dealer Home -->
     <div id="screen-dealer-home" class="card hidden">
       <div class="row" style="justify-content:space-between">
@@ -296,7 +417,6 @@
           <div class="chip">Dealer</div>
         </div>
       </div>
-
       <div style="margin-top:12px" class="tile-grid">
         <div class="tile" onclick="goTo('screen-dealer-pdi')">PDI Submission</div>
         <div class="tile" onclick="goTo('screen-dealer-parts')">Parts Search & Ordering</div>
@@ -306,7 +426,6 @@
         <div class="tile" onclick="goTo('screen-dealer-adverts')">Team Adverts</div>
       </div>
     </div>
-
     <!-- Dealer PDI -->
     <div id="screen-dealer-pdi" class="card hidden">
       <div class="row" style="justify-content:space-between">
@@ -316,7 +435,6 @@
         </div>
         <div><button class="btn" onclick="goTo('screen-dealer-home')">Back</button></div>
       </div>
-
       <div style="margin-top:12px">
         <div class="field"><label class="muted small">VIN</label><input class="input" id="pdiVin" placeholder="SR10-00123" /></div>
         <div class="field"><label class="muted small">Odometer (hours)</label><input class="input" id="pdiOdo" placeholder="142.6" /></div>
@@ -332,7 +450,6 @@
         <div style="margin-top:8px"><button class="btn" onclick="submitPDI()">Submit & Sign PDI</button></div>
       </div>
     </div>
-
     <!-- Dealer Parts -->
     <div id="screen-dealer-parts" class="card hidden">
       <div class="row" style="justify-content:space-between">
@@ -342,7 +459,6 @@
         </div>
         <div><button class="btn" onclick="goTo('screen-dealer-home')">Back</button></div>
       </div>
-
       <div style="margin-top:12px">
         <input class="input" id="partSearch" placeholder="Search part number or description" />
         <div style="margin-top:8px" class="list">
@@ -351,7 +467,6 @@
         </div>
       </div>
     </div>
-
     <!-- Dealer Leads -->
     <div id="screen-dealer-leads" class="card hidden">
       <div class="row" style="justify-content:space-between">
@@ -361,14 +476,12 @@
         </div>
         <div><button class="btn" onclick="goTo('screen-dealer-home')">Back</button></div>
       </div>
-
       <div style="margin-top:12px">
         <div class="field"><label class="muted small">Customer</label><input class="input" placeholder="Name / Contact" /></div>
         <div class="field"><label class="muted small">Vehicle VIN</label><input class="input" placeholder="SR10-00XXX" /></div>
         <div style="margin-top:8px"><button class="btn" onclick="alert('Lead sent to CRM (simulated)')">Send to CRM</button></div>
       </div>
     </div>
-
     <!-- Dealer Tech Library -->
     <div id="screen-dealer-tech" class="card hidden">
       <div class="row" style="justify-content:space-between">
@@ -378,13 +491,11 @@
         </div>
         <div><button class="btn" onclick="goTo('screen-dealer-home')">Back</button></div>
       </div>
-
       <div style="margin-top:12px" class="list">
         <div class="tile" onclick="openDoc('Gearbox splines - Tech')">Gearbox splines — Repair Guide</div>
         <div class="tile" onclick="openDoc('Engine mapping doc')">Engine mapping & dyno procedures</div>
       </div>
     </div>
-
     <!-- Dealer Jobs -->
     <div id="screen-dealer-jobs" class="card hidden">
       <div class="row" style="justify-content:space-between">
@@ -394,13 +505,11 @@
         </div>
         <div><button class="btn" onclick="goTo('screen-dealer-home')">Back</button></div>
       </div>
-
       <div style="margin-top:12px" class="list">
         <div class="tile">Job #4523 — Engine service — SR10-00123 — <span class="muted">142h</span></div>
         <div class="tile">Job #4518 — Brake replace — SR10-00412 — <span class="muted">in progress</span></div>
       </div>
     </div>
-
     <!-- Dealer Adverts -->
     <div id="screen-dealer-adverts" class="card hidden">
       <div class="row" style="justify-content:space-between">
@@ -410,47 +519,77 @@
         </div>
         <div><button class="btn" onclick="goTo('screen-dealer-home')">Back</button></div>
       </div>
-
       <div style="margin-top:12px">
         <div class="field"><label class="muted small">Title</label><input class="input" placeholder="Coaching & Car Hire" /></div>
         <div class="field"><label class="muted small">Description</label><textarea class="input" rows="4"></textarea></div>
         <div class="field"><button class="btn" onclick="alert('Advert submitted for approval (simulated)')">Submit for Approval</button></div>
       </div>
     </div>
-
     <!-- Footer nav -->
     <div class="bottom-nav">
       <button onclick="goToHome()">Home</button>
       <button onclick="goToSettings()">Settings</button>
       <button onclick="alert('Notifications (demo)')">Notifications</button>
+      <button onclick="goToRoleSelection()">Switch Role</button>
     </div>
   </div>
-
   <script>
     // simple SPA nav
-    function hideAll(){
-      document.querySelectorAll('#app > .card').forEach(c=>c.classList.add('hidden'))
+    function hideAll() {
+      document.querySelectorAll('#app > .card').forEach(c => c.classList.add('hidden'));
     }
-    function enterRole(role){
-      localStorage.setItem('myradical.role', role)
-      if(role==='customer') showCustomer()
-      else showDealer()
+    function enterRole(role) {
+      localStorage.setItem('myradical.role', role);
+      if (role === 'customer') showCustomer();
+      else showDealer();
     }
-    function showCustomer(){
-      hideAll(); document.getElementById('screen-customer-home').classList.remove('hidden')
+    function showCustomer() {
+      hideAll();
+      document.getElementById('screen-customer-home').classList.remove('hidden');
     }
-    function showDealer(){
-      hideAll(); document.getElementById('screen-dealer-home').classList.remove('hidden')
+    function showDealer() {
+      hideAll();
+      document.getElementById('screen-dealer-home').classList.remove('hidden');
     }
-    function goTo(id){ hideAll(); document.getElementById(id).classList.remove('hidden') }
-    function goToHome(){ const r=localStorage.getItem('myradical.role'); if(r==='dealer') showDealer(); else showCustomer() }
-    function goToSettings(){ alert('Settings demo: switch roles or manage notifications') }
-    function openDoc(title){ alert('Open doc: '+title+' (demo)') }
-    function openEvent(e){ alert('Open event: '+e+' — Book flow simulated') }
-    function startChat(){ const q=document.getElementById('supportQ').value||'No input'; document.getElementById('chatResult').innerHTML='<div style="background:rgba(255,255,255,0.02);padding:10px;border-radius:8px">AI Suggestion: Try checking oil level and engine mount torque. If persists, create ticket.</div>' }
-    function submitPDI(){ const vin=document.getElementById('pdiVin').value||'SR10-XXXX'; alert('PDI submitted for '+vin+' (signed)') ; goTo('screen-dealer-home') }
+    function goTo(id) {
+      hideAll();
+      document.getElementById(id).classList.remove('hidden');
+    }
+    function goToHome() {
+      const r = localStorage.getItem('myradical.role');
+      if (r === 'dealer') showDealer();
+      else showCustomer();
+    }
+    function goToSettings() {
+      alert('Settings demo: switch roles or manage notifications');
+    }
+    function goToRoleSelection() {
+      localStorage.removeItem('myradical.role');
+      hideAll();
+      document.getElementById('screen-role').classList.remove('hidden');
+    }
+    function openDoc(title) {
+      alert('Open doc: ' + title + ' (demo)');
+    }
+    function openEvent(e) {
+      alert('Open event: ' + e + ' — Book flow simulated');
+    }
+    function startChat() {
+      const q = document.getElementById('supportQ').value || 'No input';
+      document.getElementById('chatResult').innerHTML = '<div style="background:rgba(255,255,255,0.02);padding:10px;border-radius:8px">AI Suggestion: Try checking oil level and engine mount torque. If persists, create ticket.</div>';
+    }
+    function submitPDI() {
+      const vin = document.getElementById('pdiVin').value || 'SR10-XXXX';
+      alert('PDI submitted for ' + vin + ' (signed)');
+      goTo('screen-dealer-home');
+    }
     // initial landing
-    (function(){ const r=localStorage.getItem('myradical.role'); if(r==='dealer') showDealer(); else if(r==='customer') showCustomer(); else document.getElementById('screen-role').classList.remove('hidden') })()
+    (function() {
+      const r = localStorage.getItem('myradical.role');
+      if (r === 'dealer') showDealer();
+      else if (r === 'customer') showCustomer();
+      else document.getElementById('screen-role').classList.remove('hidden');
+    })();
   </script>
 </body>
 </html>
