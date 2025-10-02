@@ -1,389 +1,456 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyRadical MVP</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#000000">
-    <style>
-        body { font-family: -apple-system, sans-serif; margin: 0; padding: 0; background: #000000; color: #FFFFFF; }
-        .page { display: none; padding: 20px; min-height: 100vh; }
-        .page.active { display: block; }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #000000; border-bottom: 2px solid #F2CB13; }
-        .top-bar img { height: 40px; }
-        .top-bar h2 { margin: 0; }
-        .card, .form-group { background: #1C2526; border-radius: 10px; padding: 15px; margin: 10px 0; box-shadow: 0 4px 8px rgba(242, 203, 19, 0.2); }
-        .card h2, .form-group h2 { color: #F2CB13; font-size: 1.2em; margin: 0 0 10px; }
-        .card p, .form-group p { color: #BBBBBB; font-size: 0.9em; margin: 0 0 10px; }
-        .card button, .form-group button { background: #F2CB13; color: #000000; border: none; padding: 12px; border-radius: 5px; width: 100%; font-weight: bold; }
-        .card button:active, .form-group button:active { background: #D4A700; }
-        input, select, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #BBBBBB; border-radius: 5px; background: #2C3A3D; color: #FFFFFF; }
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #1C2526; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 4px rgba(0,0,0,0.5); }
-        .bottom-nav button { background: none; border: none; color: #F2CB13; font-size: 1em; font-weight: bold; }
-        .bottom-nav button:active { color: #D4A700; }
-        .bulletin-list, .updates-list, .calendar-list { margin: 10px 0; }
-        .bulletin-list .card, .updates-list .card { margin: 5px 0; display: flex; justify-content: space-between; align-items: center; }
-        .bulletin-list .card button, .updates-list .card button { width: auto; padding: 5px 10px; }
-        .chatbox { height: 200px; background: #2C3A3D; padding: 10px; overflow-y: auto; margin: 10px 0; }
-        .checklist label, .calendar-item { display: block; margin: 5px 0; }
-        .map-placeholder { height: 200px; background: #2C3A3D; display: flex; align-items: center; justify-content: center; margin: 10px 0; }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MyRadical — Clickable Demo</title>
+  <style>
+    :root{--bg:#0b1020;--card:#0f1724;--accent:#ff3b30;--muted:#98a0b3;--glass:rgba(255,255,255,0.03)}
+    *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    html,body,#app{height:100%;margin:0;background:linear-gradient(180deg,#071022 0%,#071a2a 100%);color:#e6eef8}
+    .container{max-width:1000px;margin:28px auto;padding:20px}
+    .card{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 6px 20px rgba(2,6,23,0.6)}
+    h1{margin:0 0 12px;font-size:20px}
+    .role-choice{display:flex;gap:16px;flex-wrap:wrap}
+    .role-btn{flex:1;min-width:220px;padding:22px;border-radius:10px;background:var(--glass);cursor:pointer;border:1px solid rgba(255,255,255,0.04);text-align:center}
+    .role-btn h2{margin:0 0 8px;font-size:18px}
+    .muted{color:var(--muted);font-size:13px}
+    nav{display:flex;gap:12px;margin-top:16px}
+    .tile-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+    .tile{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:10px;cursor:pointer;border:1px solid rgba(255,255,255,0.03)}
+    .bottom-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:rgba(6,10,18,0.6);padding:10px 18px;border-radius:999px;display:flex;gap:12px}
+    .bottom-nav button{background:transparent;border:none;color:var(--muted);cursor:pointer}
+    .hidden{display:none}
+    .btn{background:var(--accent);color:#fff;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+    .small{font-size:13px}
+    .row{display:flex;gap:12px;align-items:center}
+    .field{display:block;margin:8px 0}
+    .input,textarea,select{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:inherit}
+    .vehicle-card{display:flex;gap:12px;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border:1px solid rgba(255,255,255,0.02)}
+    .chip{background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:999px;font-size:12px}
+    .list{display:flex;flex-direction:column;gap:8px}
+    .kbd{font-family:monospace;background:rgba(255,255,255,0.03);padding:4px 6px;border-radius:6px}
+    /* simple responsive */
+    @media (max-width:800px){.tile-grid{grid-template-columns:repeat(2,1fr)}.container{margin:10px}}
+  </style>
 </head>
 <body>
-    <!-- Owner Home (Customer Landing Screen) -->
-    <div id="owner-home" class="page active">
-        <div class="top-bar">
-            <img src="https://via.placeholder.com/120x40/FFFFFF/000000?text=Radical+Logo" alt="Radical Logo">
-            <button onclick="navigateTo('account')">👤</button>
+  <div id="app" class="container">
+    <!-- Role selection -->
+    <div id="screen-role" class="card">
+      <h1>Welcome to MyRadical</h1>
+      <p class="muted">Select your app mode — Customer or Dealer / Approved Team. You can switch later in Settings.</p>
+      <div class="role-choice" style="margin-top:18px">
+        <div class="role-btn" onclick="enterRole('customer')">
+          <h2>I'm a Customer / Owner</h2>
+          <p class="muted">Access garage, bulletins, events, lap data and community</p>
+          <div style="margin-top:12px"><span class="chip">Ideal for owners</span></div>
         </div>
-        <div class="card">
-            <h2>🔔 Latest Bulletin</h2>
-            <p>Recall Notice: Model XYZ - Oct 2025</p>
-            <button onclick="navigateTo('bulletins')">View all</button>
+        <div class="role-btn" onclick="enterRole('dealer')">
+          <h2>I'm a Dealer / Team</h2>
+          <p class="muted">Manage PDIs, parts, leads and technical content</p>
+          <div style="margin-top:12px"><span class="chip">Dealer tools</span></div>
         </div>
-        <div class="card">
-            <h2>📂 My Garage</h2>
-            <p>No cars added yet.</p>
-            <button onclick="navigateTo('garage')">Add VIN</button>
-        </div>
-        <div class="card">
-            <h2>🏁 Events & Track Days</h2>
-            <button onclick="navigateTo('events')">View Calendar</button>
-        </div>
-        <div class="card">
-            <h2>🛠️ Ask a Question</h2>
-            <button onclick="navigateTo('support')">Chat Now</button>
-        </div>
-        <div class="card">
-            <h2>🌍 Dealer/Team Map</h2>
-            <button onclick="navigateTo('map')">Find Nearby</button>
-        </div>
-        <div class="bottom-nav">
-            <button onclick="navigateTo('owner-home')">Home</button>
-            <button onclick="navigateTo('bulletins')">Bulletins</button>
-            <button onclick="navigateTo('garage')">Garage</button>
-            <button onclick="navigateTo('support')">Support</button>
-            <button onclick="navigateTo('more')">More</button>
-        </div>
+      </div>
     </div>
 
-    <!-- Bulletin View (Customer Side) -->
-    <div id="bulletins" class="page">
-        <div class="top-bar">
-            <h2>Technical Bulletins</h2>
+    <!-- Customer Home -->
+    <div id="screen-customer-home" class="card hidden">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h1>Owner Home</h1>
+          <div class="muted">Welcome back — James. 2 new bulletins.</div>
         </div>
-        <p>Filter: <button>All</button> <button>My Car Only</button> <button>Recalls</button></p>
-        <div class="bulletin-list">
-            <div class="card">Recall: Engine Issue - Oct 2025, Models: SR3, SR1, Status: Mandatory <button onclick="navigateTo('bulletin-detail-1')">View</button></div>
-            <div class="card">Advisory: Tyre Wear - Sep 2025, Models: RXC, Status: Advisory <button onclick="navigateTo('bulletin-detail-2')">View</button></div>
+        <div class="row">
+          <button class="btn" onclick="goTo('screen-customer-garage')">My Garage</button>
+          <div style="width:12px"></div>
+          <div class="chip">Owner</div>
         </div>
-        <button onclick="navigateTo('owner-home')">Back</button>
+      </div>
+
+      <div class="tile-grid">
+        <div class="tile" onclick="goTo('screen-customer-garage')">
+          <strong>My Garage</strong>
+          <div class="muted small">Engine hours, lifing & logbook</div>
+        </div>
+        <div class="tile" onclick="goTo('screen-bulletins')">
+          <strong>Bulletins & Manuals</strong>
+          <div class="muted small">VIN-targeted safety updates</div>
+        </div>
+        <div class="tile" onclick="goTo('screen-events')">
+          <strong>Events & Bookings</strong>
+          <div class="muted small">Find & book track days</div>
+        </div>
+        <div class="tile" onclick="goTo('screen-performance')">
+          <strong>Performance & Telemetry</strong>
+          <div class="muted small">Best laps, uploads & AI coaching</div>
+        </div>
+        <div class="tile" onclick="goTo('screen-community')">
+          <strong>Community & Leaderboards</strong>
+          <div class="muted small">Share & compare</div>
+        </div>
+        <div class="tile" onclick="goTo('screen-support')">
+          <strong>Ask a Question</strong>
+          <div class="muted small">AI-assisted tech support</div>
+        </div>
+      </div>
     </div>
 
-    <!-- Bulletin Detail #1 (Recall) -->
-    <div id="bulletin-detail-1" class="page">
-        <div class="top-bar">
-            <h2>Recall: Engine Issue - Oct 2025</h2>
+    <!-- Customer Garage -->
+    <div id="screen-customer-garage" class="card hidden">
+      <div class="row" style="justify-content:space-between;align-items:flex-start">
+        <div>
+          <h1>My Garage</h1>
+          <div class="muted">Manage your vehicles & service history</div>
         </div>
-        <div class="card">
-            <p>Tags: SR3, SR1, High</p>
-            <p>Full text: Engine recall due to fault. Contact dealer immediately.</p>
-            <img src="https://via.placeholder.com/300x200/F2CB13/000000?text=Engine+Image" alt="Engine Image">
-            <button onclick="alert('PDF downloaded')">Download PDF</button>
-            <button onclick="navigateTo('map')">Book Service</button>
+        <div class="row">
+          <button class="btn" onclick="goTo('screen-customer-home')">Back</button>
         </div>
-        <button onclick="navigateTo('bulletins')">Back</button>
-    </div>
+      </div>
 
-    <!-- Bulletin Detail #2 (Advisory) -->
-    <div id="bulletin-detail-2" class="page">
-        <div class="top-bar">
-            <h2>Advisory: Tyre Wear - Sep 2025</h2>
-        </div>
-        <div class="card">
-            <p>Tags: RXC, Low</p>
-            <p>Full text: Check tyre wear on RXC models. Advisory only.</p>
-            <button onclick="alert('PDF downloaded')">Download PDF</button>
-        </div>
-        <button onclick="navigateTo('bulletins')">Back</button>
-    </div>
-
-    <!-- Ask a Question (Customer Support) -->
-    <div id="support" class="page">
-        <div class="top-bar">
-            <h2>Technical Support</h2>
-        </div>
-        <input type="text" placeholder="Search bulletins/manuals..." />
-        <div class="chatbox">
-            <p>AI: How can I help you today?</p>
-            <p>You: [Type here]</p>
-        </div>
-        <button onclick="showSupportForm()">Submit to Radical Support</button>
-        <button onclick="navigateTo('owner-home')">Back</button>
-    </div>
-
-    <!-- Support Form -->
-    <div id="support-form" class="page" style="display: none;">
-        <div class="top-bar">
-            <h2>Support Ticket Form</h2>
-        </div>
-        <div class="form-group">
-            <input type="text" placeholder="Subject" />
-            <textarea placeholder="Description"></textarea>
-            <input type="file" accept="image/*,video/*" placeholder="Upload photos/video" />
-            <select>
-                <option value="">Select Car</option>
-                <option value="sr3">SR3</option>
-                <option value="rxc">RXC</option>
-            </select>
-            <button onclick="alert('Ticket created in Zoho Desk'); hideSupportForm()">Submit</button>
-        </div>
-        <button onclick="hideSupportForm()">Back</button>
-    </div>
-
-    <!-- My Garage -->
-    <div id="garage" class="page">
-        <div class="top-bar">
-            <h2>My Garage</h2>
-        </div>
-        <div class="card">
-            <p>Add your Radical vehicle by VIN.</p>
-            <input type="text" placeholder="Enter VIN..." />
-            <button onclick="alert('VIN added to garage')">Add Vehicle</button>
-        </div>
-        <div class="card">
-            <p>Current Vehicles: None</p>
-        </div>
-        <button onclick="navigateTo('owner-home')">Back</button>
-    </div>
-
-    <!-- Events & Track Days -->
-    <div id="events" class="page">
-        <div class="top-bar">
-            <h2>Events & Track Days</h2>
-        </div>
-        <div class="calendar-list">
-            <div class="card">
-                <h3>World Finals 2025</h3>
-                <p>Oct 15-18, Virginia International Raceway</p>
-                <button onclick="alert('Registered for event')">Register</button>
+      <div style="margin-top:12px" class="list">
+        <div class="vehicle-card">
+          <div style="width:72px;height:48px;background:linear-gradient(90deg,#122236,#18314a);border-radius:6px"></div>
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-weight:600">Radical SR10 - VIN: <span class="kbd">SR10-00123</span></div>
+                <div class="muted small">Owner since 2024 • Dealer: Radical London</div>
+              </div>
+              <div style="text-align:right">
+                <div class="muted small">Engine hours</div>
+                <div style="font-weight:700">142.6 h</div>
+              </div>
             </div>
-            <div class="card">
-                <h3>Racing Series</h3>
-                <p>Drive/Race opportunities</p>
-                <button onclick="navigateTo('racing-series')">View Series</button>
+            <div style="margin-top:8px;display:flex;gap:8px">
+              <div class="chip">Next service: 10 h</div>
+              <div class="chip">Best lap: 1:42.36 @ Donington</div>
+              <div class="chip">Pedigree ready</div>
             </div>
+          </div>
         </div>
-        <button onclick="navigateTo('owner-home')">Back</button>
+
+        <div class="card" style="padding:12px;margin-top:10px">
+          <h3 style="margin:0 0 8px">Maintenance Logbook</h3>
+          <div class="muted small">Recent activity</div>
+          <ul style="margin:8px 0 0;padding-left:18px">
+            <li>2025-09-28 — PDI completed (Radical London)</li>
+            <li>2025-06-11 — Engine service (142h)</li>
+            <li>2025-04-05 — Gearbox refurb (contractor)</li>
+          </ul>
+          <div style="margin-top:10px"><button class="btn">Download Pedigree</button></div>
+        </div>
+      </div>
     </div>
 
-    <!-- Racing Series (Added from Radical site inspiration) -->
-    <div id="racing-series" class="page">
-        <div class="top-bar">
-            <h2>Racing Series</h2>
+    <!-- Bulletins -->
+    <div id="screen-bulletins" class="card hidden">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h1>Bulletins & Manuals</h1>
+          <div class="muted">Model-targeted technical bulletins</div>
         </div>
+        <div><button class="btn" onclick="goTo('screen-customer-home')">Back</button></div>
+      </div>
+
+      <div style="margin-top:12px" class="list">
+        <div class="tile" style="padding:12px" onclick="openDoc('Safety recall: valve guide')">
+          <strong>Safety recall: valve guide</strong>
+          <div class="muted small">Affected builds: SR10 2023-2025 • Published 2025-09-30</div>
+        </div>
+        <div class="tile" style="padding:12px" onclick="openDoc('Service bulletin: gearbox splines')">
+          <strong>Service bulletin: gearbox splines</strong>
+          <div class="muted small">Procedure & torque tables • Published 2025-07-12</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Events -->
+    <div id="screen-events" class="card hidden">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h1>Events & Bookings</h1>
+          <div class="muted">Find track days, races and coaching</div>
+        </div>
+        <div><button class="btn" onclick="goTo('screen-customer-home')">Back</button></div>
+      </div>
+
+      <div style="margin-top:12px" class="list">
+        <div class="tile" onclick="openEvent('Radical Donington Test Day - 2025-10-12')">
+          <strong>Radical Donington Test Day</strong>
+          <div class="muted small">12 Oct 2025 • £295 • 08:00–17:00</div>
+        </div>
+        <div class="tile" onclick="openEvent('Radical Sprint - Silverstone')">
+          <strong>Radical Sprint — Silverstone</strong>
+          <div class="muted small">22 Nov 2025 • £420 • entries open</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance -->
+    <div id="screen-performance" class="card hidden">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h1>Performance & Telemetry</h1>
+          <div class="muted">Upload sessions, view best lap & AI coaching</div>
+        </div>
+        <div><button class="btn" onclick="goTo('screen-customer-home')">Back</button></div>
+      </div>
+
+      <div style="margin-top:12px" class="list">
         <div class="card">
-            <p>Go Racing: Find races and series.</p>
-            <button onclick="alert('Series info loaded')">Explore</button>
+          <h3 style="margin:0 0 8px">Best Lap — Donington Park</h3>
+          <div class="muted small">1:42.36 • View trace & compare</div>
+          <div style="margin-top:8px"><button class="btn" onclick="goTo('screen-lap-compare')">View Trace</button></div>
         </div>
-        <button onclick="navigateTo('events')">Back</button>
+
+        <div class="card" style="margin-top:10px">
+          <h3 style="margin:0 0 8px">Upload Session</h3>
+          <div class="muted small">Import RaceChrono CSV / GPX or record live</div>
+          <div style="margin-top:8px" class="row">
+            <input class="input" id="fileInput" type="file" />
+            <button class="btn" style="margin-left:8px" onclick="alert('Demo: file import simulated')">Upload</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:10px">
+          <h3 style="margin:0 0 8px">AI Coaching</h3>
+          <div class="muted small">Automated insights for uploaded sessions</div>
+          <div style="margin-top:8px"> 
+            <div style="background:rgba(255,255,255,0.02);padding:10px;border-radius:8px">Braking: Try braking 10m later at Turn 5 to carry more speed through the apex.</div>
+            <div style="margin-top:8px"><button class="btn">Request Expert Coach (paid)</button></div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Dealer/Team Map -->
-    <div id="map" class="page">
-        <div class="top-bar">
-            <h2>Dealer/Team Map</h2>
+    <!-- Lap compare -->
+    <div id="screen-lap-compare" class="card hidden">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h1>Best Lap Trace</h1>
+          <div class="muted">Compare lines & telemetry</div>
         </div>
-        <div class="map-placeholder">
-            <p>[Map Placeholder - Nearest Dealer: Radical HQ, UK]</p>
+        <div><button class="btn" onclick="goTo('screen-performance')">Back</button></div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div style="height:220px;border-radius:10px;background:linear-gradient(90deg,#081424,#0b2132);display:flex;align-items:center;justify-content:center;color:var(--muted)">[Map Trace Placeholder]</div>
+        <div style="margin-top:12px;display:flex;gap:10px">
+          <div class="card" style="flex:1;padding:10px">Lap time: <strong>1:42.36</strong></div>
+          <div class="card" style="flex:1;padding:10px">Delta vs prev: <strong>-0.82s</strong></div>
+          <div class="card" style="flex:1;padding:10px">Top speed: <strong>184 km/h</strong></div>
         </div>
-        <button onclick="alert('Lead created in CRM for booking')">Select Dealer</button>
-        <button onclick="navigateTo('owner-home')">Back</button>
+      </div>
     </div>
 
-    <!-- Account & Garage -->
-    <div id="account" class="page">
-        <div class="top-bar">
-            <h2>Account & Garage</h2>
+    <!-- Community -->
+    <div id="screen-community" class="card hidden">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h1>Community</h1>
+          <div class="muted">Leaderboards & owner posts</div>
         </div>
-        <div class="card">
-            <p>User Profile: radical-james</p>
-            <p>Linked Garage: 0 vehicles</p>
-            <button onclick="navigateTo('garage')">Manage Garage</button>
+        <div><button class="btn" onclick="goTo('screen-customer-home')">Back</button></div>
+      </div>
+
+      <div style="margin-top:12px" class="list">
+        <div class="tile" style="padding:12px">
+          <strong>Leaderboard — Donington Park</strong>
+          <div class="muted small">Top 3: 1) J. Scott 1:42.36 2) A. Moss 1:43.01 3) P. Lane 1:43.55</div>
         </div>
-        <button onclick="navigateTo('owner-home')">Back</button>
+        <div class="card" style="padding:12px">
+          <h3 style="margin:0 0 8px">Recent Posts</h3>
+          <div class="muted small">James: Amazing day at Donington — best laps in the SR10!</div>
+        </div>
+      </div>
     </div>
 
-    <!-- More -->
-    <div id="more" class="page">
-        <div class="top-bar">
-            <h2>More</h2>
+    <!-- Support -->
+    <div id="screen-support" class="card hidden">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h1>Ask a Question</h1>
+          <div class="muted">AI-assisted tech support & ticketing</div>
         </div>
-        <div class="card">
-            <button onclick="alert('Logged out')">Logout</button>
-            <button onclick="navigateTo('settings')">Settings</button>
-        </div>
-        <button onclick="navigateTo('owner-home')">Back</button>
+        <div><button class="btn" onclick="goTo('screen-customer-home')">Back</button></div>
+      </div>
+
+      <div style="margin-top:12px">
+        <input class="input" id="supportQ" placeholder="Describe your issue (e.g. oil leak after session)" />
+        <div style="margin-top:8px"><button class="btn" onclick="startChat()">Ask AI</button></div>
+        <div id="chatResult" style="margin-top:12px"></div>
+      </div>
     </div>
 
-    <!-- Settings (Stub) -->
-    <div id="settings" class="page">
-        <div class="top-bar">
-            <h2>Settings</h2>
+    <!-- Dealer Home -->
+    <div id="screen-dealer-home" class="card hidden">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h1>Dealer Dashboard</h1>
+          <div class="muted">Radical London — Active jobs: 4</div>
         </div>
-        <div class="card">
-            <p>Notifications: On</p>
-            <button onclick="alert('Settings saved')">Save</button>
+        <div class="row">
+          <button class="btn" onclick="goTo('screen-dealer-pdi')">New PDI</button>
+          <div style="width:8px"></div>
+          <div class="chip">Dealer</div>
         </div>
-        <button onclick="navigateTo('more')">Back</button>
+      </div>
+
+      <div style="margin-top:12px" class="tile-grid">
+        <div class="tile" onclick="goTo('screen-dealer-pdi')">PDI Submission</div>
+        <div class="tile" onclick="goTo('screen-dealer-parts')">Parts Search & Ordering</div>
+        <div class="tile" onclick="goTo('screen-dealer-leads')">Leads & Contracts</div>
+        <div class="tile" onclick="goTo('screen-dealer-tech')">Tech Library</div>
+        <div class="tile" onclick="goTo('screen-dealer-jobs')">Maintenance Tracking</div>
+        <div class="tile" onclick="goTo('screen-dealer-adverts')">Team Adverts</div>
+      </div>
     </div>
 
-    <!-- PDI Submission (Dealer Only) -->
-    <div id="pdi" class="page">
-        <div class="top-bar">
-            <h2>Pre-Delivery Inspection</h2>
+    <!-- Dealer PDI -->
+    <div id="screen-dealer-pdi" class="card hidden">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h1>PDI Submission</h1>
+          <div class="muted">Create a signed Pre-Delivery Inspection</div>
         </div>
-        <div class="form-group">
-            <h2>PDI Form</h2>
-            <input type="text" placeholder="Scan VIN or enter manually..." />
-            <input type="number" placeholder="Odometer reading..." />
-            <div class="checklist">
-                <label><input type="checkbox"> Fluids checked</label>
-                <label><input type="checkbox"> Wiring checked</label>
-                <label><input type="checkbox"> Tyres checked</label>
-                <label><input type="checkbox"> Test run completed</label>
-            </div>
-            <input type="file" accept="image/*" placeholder="Upload photos..." />
-            <input type="text" placeholder="Technician name..." />
-            <input type="text" placeholder="Signature (draw here)..." />
-            <button onclick="alert('PDI submitted successfully - PDF to HQ & CRM updated')">Submit</button>
+        <div><button class="btn" onclick="goTo('screen-dealer-home')">Back</button></div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="field"><label class="muted small">VIN</label><input class="input" id="pdiVin" placeholder="SR10-00123" /></div>
+        <div class="field"><label class="muted small">Odometer (hours)</label><input class="input" id="pdiOdo" placeholder="142.6" /></div>
+        <div class="field"><label class="muted small">Inspection Items</label>
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <label><input type="checkbox" /> Brakes</label>
+            <label><input type="checkbox" /> Engine oil</label>
+            <label><input type="checkbox" /> Tyres</label>
+          </div>
         </div>
-        <button onclick="navigateTo('dealer-dashboard')">Back</button>
+        <div class="field"><label class="muted small">Photos</label><input class="input" type="file" /></div>
+        <div class="field"><label class="muted small">Technician</label><input class="input" placeholder="Sam Tech" /></div>
+        <div style="margin-top:8px"><button class="btn" onclick="submitPDI()">Submit & Sign PDI</button></div>
+      </div>
     </div>
 
-    <!-- Dealer Dashboard (Dealer Landing Screen) -->
-    <div id="dealer-dashboard" class="page">
-        <div class="top-bar">
-            <img src="https://via.placeholder.com/120x40/FFFFFF/000000?text=Radical+Logo" alt="Radical Logo">
-            <h2>Dealer Name</h2>
+    <!-- Dealer Parts -->
+    <div id="screen-dealer-parts" class="card hidden">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h1>Parts Search & Ordering</h1>
+          <div class="muted">Search catalogue & view live stock</div>
         </div>
-        <div class="card">
-            <h2>📂 Bulletins Library</h2>
-            <button onclick="alert('View dealer docs')">View Docs</button>
+        <div><button class="btn" onclick="goTo('screen-dealer-home')">Back</button></div>
+      </div>
+
+      <div style="margin-top:12px">
+        <input class="input" id="partSearch" placeholder="Search part number or description" />
+        <div style="margin-top:8px" class="list">
+          <div class="tile">Part: P-00123 — Brake disc — <span class="muted">Stock: 4</span> <button class="btn" style="float:right">Reserve</button></div>
+          <div class="tile">Part: P-00555 — Clutch kit — <span class="muted">Stock: 0 • ETA 5 days</span></div>
         </div>
-        <div class="card">
-            <h2>📝 PDI Submissions</h2>
-            <button onclick="navigateTo('pdi')">Start New</button>
-        </div>
-        <div class="card">
-            <h2>📦 Parts Orders</h2>
-            <button onclick="navigateTo('parts-orders')">Place Order</button>
-        </div>
-        <div class="card">
-            <h2>👥 Leads & Contracts</h2>
-            <button onclick="navigateTo('leads-contracts')">Push to CRM</button>
-        </div>
-        <div class="card">
-            <h2>🔧 Warranty / Claims</h2>
-            <button onclick="navigateTo('warranty-claims')">Submit Case</button>
-        </div>
-        <div class="card">
-            <h2>📢 Dealer Updates</h2>
-            <button onclick="navigateTo('dealer-updates')">View Updates</button>
-        </div>
-        <div class="bottom-nav">
-            <button onclick="navigateTo('dealer-dashboard')">Dashboard</button>
-            <button onclick="navigateTo('pdi')">PDIs</button>
-            <button onclick="navigateTo('orders')">Orders</button>
-            <button onclick="navigateTo('support')">Support</button>
-            <button onclick="navigateTo('profile')">Profile</button>
-        </div>
+      </div>
     </div>
 
-    <!-- Parts Orders -->
-    <div id="parts-orders" class="page">
-        <div class="top-bar">
-            <h2>Parts Orders</h2>
+    <!-- Dealer Leads -->
+    <div id="screen-dealer-leads" class="card hidden">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h1>Leads & Contracts</h1>
+          <div class="muted">Create a lead & sync to CRM</div>
         </div>
-        <div class="form-group">
-            <input type="text" placeholder="Part Number (e.g., MO-XXX)..." />
-            <input type="number" placeholder="Quantity..." />
-            <textarea placeholder="Order Notes"></textarea>
-            <button onclick="alert('Order placed - Monthly MO-XXX flow initiated')">Submit Order</button>
-        </div>
-        <button onclick="navigateTo('dealer-dashboard')">Back</button>
+        <div><button class="btn" onclick="goTo('screen-dealer-home')">Back</button></div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="field"><label class="muted small">Customer</label><input class="input" placeholder="Name / Contact" /></div>
+        <div class="field"><label class="muted small">Vehicle VIN</label><input class="input" placeholder="SR10-00XXX" /></div>
+        <div style="margin-top:8px"><button class="btn" onclick="alert('Lead sent to CRM (simulated)')">Send to CRM</button></div>
+      </div>
     </div>
 
-    <!-- Leads & Contracts -->
-    <div id="leads-contracts" class="page">
-        <div class="top-bar">
-            <h2>Leads & Contracts</h2>
+    <!-- Dealer Tech Library -->
+    <div id="screen-dealer-tech" class="card hidden">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h1>Tech Support Library</h1>
+          <div class="muted">Dealer-only manuals & bulletins</div>
         </div>
-        <div class="form-group">
-            <input type="text" placeholder="Lead Name/Email..." />
-            <textarea placeholder="Contract Details"></textarea>
-            <button onclick="alert('Lead pushed to CRM')">Submit Lead</button>
-        </div>
-        <button onclick="navigateTo('dealer-dashboard')">Back</button>
+        <div><button class="btn" onclick="goTo('screen-dealer-home')">Back</button></div>
+      </div>
+
+      <div style="margin-top:12px" class="list">
+        <div class="tile" onclick="openDoc('Gearbox splines - Tech')">Gearbox splines — Repair Guide</div>
+        <div class="tile" onclick="openDoc('Engine mapping doc')">Engine mapping & dyno procedures</div>
+      </div>
     </div>
 
-    <!-- Warranty / Claims -->
-    <div id="warranty-claims" class="page">
-        <div class="top-bar">
-            <h2>Warranty / Claims</h2>
+    <!-- Dealer Jobs -->
+    <div id="screen-dealer-jobs" class="card hidden">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h1>Maintenance Tracking</h1>
+          <div class="muted">Active jobs & service history</div>
         </div>
-        <div class="form-group">
-            <input type="text" placeholder="VIN / Claim ID..." />
-            <textarea placeholder="Claim Description"></textarea>
-            <input type="file" accept="image/*" placeholder="Upload Evidence..." />
-            <button onclick="alert('Claim submitted')">Submit</button>
-        </div>
-        <button onclick="navigateTo('dealer-dashboard')">Back</button>
+        <div><button class="btn" onclick="goTo('screen-dealer-home')">Back</button></div>
+      </div>
+
+      <div style="margin-top:12px" class="list">
+        <div class="tile">Job #4523 — Engine service — SR10-00123 — <span class="muted">142h</span></div>
+        <div class="tile">Job #4518 — Brake replace — SR10-00412 — <span class="muted">in progress</span></div>
+      </div>
     </div>
 
-    <!-- Dealer Updates -->
-    <div id="dealer-updates" class="page">
-        <div class="top-bar">
-            <h2>Dealer Updates</h2>
+    <!-- Dealer Adverts -->
+    <div id="screen-dealer-adverts" class="card hidden">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h1>Team Adverts</h1>
+          <div class="muted">Create & manage adverts for customers</div>
         </div>
-        <div class="updates-list">
-            <div class="card">Urgent: New policy effective Oct 2025 <button>Read More</button></div>
-            <div class="card">HQ Announcement: Parts Delay - Sep 2025 <button>Read More</button></div>
-        </div>
-        <button onclick="navigateTo('dealer-dashboard')">Back</button>
+        <div><button class="btn" onclick="goTo('screen-dealer-home')">Back</button></div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="field"><label class="muted small">Title</label><input class="input" placeholder="Coaching & Car Hire" /></div>
+        <div class="field"><label class="muted small">Description</label><textarea class="input" rows="4"></textarea></div>
+        <div class="field"><button class="btn" onclick="alert('Advert submitted for approval (simulated)')">Submit for Approval</button></div>
+      </div>
     </div>
 
-    <!-- Dealer Orders (Stub for Bottom Nav) -->
-    <div id="orders" class="page"><h2>Orders History</h2><button onclick="navigateTo('dealer-dashboard')">Back</button></div>
-
-    <!-- Dealer Profile -->
-    <div id="profile" class="page">
-        <div class="top-bar">
-            <h2>Profile</h2>
-        </div>
-        <div class="card">
-            <p>Dealer: Radical HQ</p>
-            <button onclick="alert('Profile updated')">Edit</button>
-        </div>
-        <button onclick="navigateTo('dealer-dashboard')">Back</button>
+    <!-- Footer nav -->
+    <div class="bottom-nav">
+      <button onclick="goToHome()">Home</button>
+      <button onclick="goToSettings()">Settings</button>
+      <button onclick="alert('Notifications (demo)')">Notifications</button>
     </div>
+  </div>
 
-    <script>
-        function navigateTo(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            window.scrollTo(0, 0);
-        }
-        function showSupportForm() {
-            navigateTo('support-form');
-        }
-        function hideSupportForm() {
-            navigateTo('support');
-        }
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
-        }
-    </script>
+  <script>
+    // simple SPA nav
+    function hideAll(){
+      document.querySelectorAll('#app > .card').forEach(c=>c.classList.add('hidden'))
+    }
+    function enterRole(role){
+      localStorage.setItem('myradical.role', role)
+      if(role==='customer') showCustomer()
+      else showDealer()
+    }
+    function showCustomer(){
+      hideAll(); document.getElementById('screen-customer-home').classList.remove('hidden')
+    }
+    function showDealer(){
+      hideAll(); document.getElementById('screen-dealer-home').classList.remove('hidden')
+    }
+    function goTo(id){ hideAll(); document.getElementById(id).classList.remove('hidden') }
+    function goToHome(){ const r=localStorage.getItem('myradical.role'); if(r==='dealer') showDealer(); else showCustomer() }
+    function goToSettings(){ alert('Settings demo: switch roles or manage notifications') }
+    function openDoc(title){ alert('Open doc: '+title+' (demo)') }
+    function openEvent(e){ alert('Open event: '+e+' — Book flow simulated') }
+    function startChat(){ const q=document.getElementById('supportQ').value||'No input'; document.getElementById('chatResult').innerHTML='<div style="background:rgba(255,255,255,0.02);padding:10px;border-radius:8px">AI Suggestion: Try checking oil level and engine mount torque. If persists, create ticket.</div>' }
+    function submitPDI(){ const vin=document.getElementById('pdiVin').value||'SR10-XXXX'; alert('PDI submitted for '+vin+' (signed)') ; goTo('screen-dealer-home') }
+    // initial landing
+    (function(){ const r=localStorage.getItem('myradical.role'); if(r==='dealer') showDealer(); else if(r==='customer') showCustomer(); else document.getElementById('screen-role').classList.remove('hidden') })()
+  </script>
 </body>
 </html>
